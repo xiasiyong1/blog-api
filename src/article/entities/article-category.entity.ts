@@ -15,6 +15,7 @@ export class ArticleCategory {
 
   @Column({
     comment: '分类名称',
+    unique: true,
   })
   name: string;
 
