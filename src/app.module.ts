@@ -5,6 +5,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigEnum } from 'src/enum/config.enum';
 import { join } from 'path';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { RoleModule } from './role/role.module';
+import { NoticeModule } from './notice/notice.module';
+import { ArticleModule } from './article/article.module';
 
 const envFilePath = ['.env', `.env.${process.env}`];
 
@@ -29,6 +34,11 @@ const envFilePath = ['.env', `.env.${process.env}`];
       },
       inject: [ConfigService],
     }),
+    UserModule,
+    AuthModule,
+    RoleModule,
+    NoticeModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
