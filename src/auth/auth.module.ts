@@ -7,11 +7,17 @@ import { Profile } from 'src/user/entities/profile.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ConfigEnum } from 'src/enum/config.enum';
+import { Role } from 'src/role/entities/role.entity';
+import { UserModule } from 'src/user/user.module';
+import { RoleModule } from 'src/role/role.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Profile]),
+    UserModule,
+    RoleModule,
+    TypeOrmModule.forFeature([User, Profile, Role]),
     JwtModule.registerAsync({
+      global: true,
       useFactory(configService: ConfigService) {
         return {
           global: true,

@@ -10,10 +10,8 @@ import {
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import {
-  SignInWithEmailDto,
-  SignUpWithEmailDto,
-} from './dto/sign-in-with-email.dto';
+import { SignInWithEmailDto } from './dto/sign-in-with-email.dto';
+import { SignUpWithEmailDto } from './dto/sign-up-with-email.dto';
 
 @Controller('auth')
 export class AuthController {

@@ -56,14 +56,13 @@ export class AuthService {
       throw new NotFoundException('用户名或密码错误');
     }
     const payload = { sub: user.id, email: user.email, phone: user.phone };
-
     return {
-      access_token: await this.jwtService.signAsync(payload, {
-        expiresIn: this.configService.get(ConfigEnum.JWT_ACCESS_TOKEN_EXPIRE),
-      }),
-      refresh_token: await this.jwtService.signAsync(payload, {
-        expiresIn: this.configService.get(ConfigEnum.JWT_REFRESH_TOKEN_EXPIRE),
-      }),
+      // access_token: await this.jwtService.signAsync(payload, {
+      //   expiresIn: this.configService.get(ConfigEnum.JWT_ACCESS_TOKEN_EXPIRE),
+      // }),
+      // refresh_token: await this.jwtService.signAsync(payload, {
+      //   expiresIn: this.configService.get(ConfigEnum.JWT_REFRESH_TOKEN_EXPIRE),
+      // }),
     };
   }
 
