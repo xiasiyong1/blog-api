@@ -1,19 +1,21 @@
-import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Article } from './article.entity';
 
 @Entity()
-export class Role {
+export class ArticleCategory {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    comment: '分类名称',
+  })
   name: string;
 
   @CreateDateColumn()
@@ -22,6 +24,6 @@ export class Role {
   @UpdateDateColumn()
   updateTime: Date;
 
-  @ManyToMany(() => User, (user) => user.roles, { cascade: true })
-  users: User[];
+  @OneToMany(() => Article, (article) => article.category)
+  articles: Article[];
 }
