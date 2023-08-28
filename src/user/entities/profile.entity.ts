@@ -30,5 +30,4 @@ export class Profile {
   })
   @JoinColumn()
   user: User;
-  //   role: string;
 }

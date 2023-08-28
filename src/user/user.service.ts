@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { In, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Like, Repository } from 'typeorm';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './entities/profile.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from 'src/role/entities/role.entity';
+import { FindUserDto } from './dto/find-user-dto';
+import { GenderEnum } from 'src/enum/gender.enum';
 
 @Injectable()
 export class UserService {
@@ -26,11 +27,43 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  findAll() {
-    return this.userRepository.find({
-      relations: { profile: true, roles: true },
+  async findAll(findUserDto: FindUserDto) {
+    const take = +findUserDto.pageSize || 10;
+    const currentPage = +findUserDto.currentPage || 1;
+    const username = findUserDto.username;
+    const email = findUserDto.email;
+    const skip = (currentPage - 1) * take;
+
+    const where: FindOptionsWhere<User> = {
+      profile: {
+        gender: findUserDto.gender || GenderEnum.UN_KNOWN,
+      },
+    };
+
+    if (username) {
+      where.profile['username'] = Like(`%${username}%`);
+    }
+
+    if (email) {
+      where.email = Like(`%${email}%`);
+    }
+
+    if (findUserDto.roles) {
+      where.roles = {
+        id: In(findUserDto.roles),
+      };
+    }
+
+    const [userList, count] = await this.userRepository.findAndCount({
+      relations: { roles: true, profile: true },
+      take,
+      skip,
+      where,
     });
-    return `This action returns all user`;
+    return {
+      userList,
+      count,
+    };
   }
 
   async findById(id: string) {
@@ -54,6 +87,7 @@ export class UserService {
   findUserByEmail(email: string) {
     return this.userRepository.findOne({
       where: { email },
+      relations: { roles: true },
     });
   }
   async updateProfile(id: string, updateProfileDto: UpdateProfileDto) {

@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,6 +21,7 @@ import { JwtToken } from 'src/types/jwt';
 import { Request } from 'express';
 import { User } from './entities/user.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { FindUserDto } from './dto/find-user-dto';
 
 @Controller('user')
 @UseGuards(JwtGuard)
@@ -45,8 +47,8 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  findAll(@Query() findUserDto: FindUserDto) {
+    return this.userService.findAll(findUserDto);
   }
 
   @Get(':id')

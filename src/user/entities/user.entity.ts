@@ -46,7 +46,10 @@ export class User {
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
 
-  @ManyToMany(() => Role, (role) => role.users, { onUpdate: 'CASCADE' })
+  @ManyToMany(() => Role, (role) => role.users, {
+    onUpdate: 'CASCADE',
+    cascade: true,
+  })
   @JoinTable()
   roles: Role[];
 }
