@@ -10,23 +10,27 @@ export class RoleService {
   constructor(
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
   ) {}
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  async create(createRoleDto: CreateRoleDto) {
+    const role = this.roleRepository.create(createRoleDto);
+    return this.roleRepository.save(role);
   }
 
   findAll() {
-    return `This action returns all role`;
+    return this.roleRepository.find({});
   }
 
   findOne(id: number) {
     return this.roleRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  async update(id: number, updateRoleDto: UpdateRoleDto) {
+    let role = await this.roleRepository.findOne({ where: { id } });
+    role = this.roleRepository.merge(role, updateRoleDto);
+    return this.roleRepository.save(role);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(id: number) {
+    const role = await this.roleRepository.findOne({ where: { id } });
+    return this.roleRepository.remove(role);
   }
 }

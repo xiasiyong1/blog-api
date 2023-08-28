@@ -59,7 +59,9 @@ export class Article {
   @JoinTable()
   tags: ArticleTag[];
 
-  @OneToMany(() => ArticleComment, (articleComment) => articleComment.article)
+  @OneToMany(() => ArticleComment, (articleComment) => articleComment.article, {
+    cascade: true,
+  })
   comments: ArticleComment[];
 
   @CreateDateColumn({

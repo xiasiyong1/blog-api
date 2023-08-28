@@ -31,13 +31,16 @@ export class EmailController {
     }
     // 过期时间5分钟
     await this.redisService.set(`captcha_${email}`, code, 5 * 60);
-
-    await this.emailService.sendMail({
-      to: email,
-      subject: '注册验证码',
-      html: `<p>你的注册验证码是: ${code}</p>`,
-    });
-    return '发送成功';
+    try {
+      await this.emailService.sendMail({
+        to: email,
+        subject: '注册验证码',
+        html: `<p>你的注册验证码是: ${code}</p>`,
+      });
+      return '发送成功';
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   @Post()

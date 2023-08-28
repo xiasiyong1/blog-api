@@ -15,7 +15,6 @@ export class ArticleTag {
 
   @Column({
     comment: '标签名称',
-    unique: true,
   })
   name: string;
 
