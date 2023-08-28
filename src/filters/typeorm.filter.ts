@@ -1,9 +1,10 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Response } from 'express';
+import { TypeORMError } from 'typeorm';
 
-@Catch(TypeError)
+@Catch(TypeORMError)
 export class TypeormFilter<T> implements ExceptionFilter {
-  catch(exception: TypeError, host: ArgumentsHost) {
+  catch(exception: TypeORMError, host: ArgumentsHost) {
     const request = host.switchToHttp().getRequest<Request>();
     const response = host.switchToHttp().getResponse<Response>();
 

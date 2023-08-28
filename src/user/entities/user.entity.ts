@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Profile } from './profile.entity';
 import { Role } from 'src/role/entities/role.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -33,6 +34,7 @@ export class User {
   @Column({
     comment: '密码',
   })
+  @Exclude()
   password: string;
 
   @CreateDateColumn()

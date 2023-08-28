@@ -22,7 +22,6 @@ export class AuthService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-    @InjectRepository(Role)
     private readonly roleService: RoleService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
@@ -57,12 +56,12 @@ export class AuthService {
     }
     const payload = { sub: user.id, email: user.email, phone: user.phone };
     return {
-      // access_token: await this.jwtService.signAsync(payload, {
-      //   expiresIn: this.configService.get(ConfigEnum.JWT_ACCESS_TOKEN_EXPIRE),
-      // }),
-      // refresh_token: await this.jwtService.signAsync(payload, {
-      //   expiresIn: this.configService.get(ConfigEnum.JWT_REFRESH_TOKEN_EXPIRE),
-      // }),
+      access_token: await this.jwtService.signAsync(payload, {
+        expiresIn: this.configService.get(ConfigEnum.JWT_ACCESS_TOKEN_EXPIRE),
+      }),
+      refresh_token: await this.jwtService.signAsync(payload, {
+        expiresIn: this.configService.get(ConfigEnum.JWT_REFRESH_TOKEN_EXPIRE),
+      }),
     };
   }
 
