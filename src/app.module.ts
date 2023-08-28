@@ -12,6 +12,7 @@ import { NoticeModule } from './notice/notice.module';
 import { ArticleModule } from './article/article.module';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
+import { UploadModule } from './upload/upload.module';
 
 const envFilePath = ['.env', `.env.${process.env}`];
 
@@ -43,6 +44,7 @@ const envFilePath = ['.env', `.env.${process.env}`];
     ArticleModule,
     RedisModule,
     EmailModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
