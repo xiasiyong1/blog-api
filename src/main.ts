@@ -6,7 +6,9 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
   app.setGlobalPrefix('/api/v1');
   app.useGlobalFilters(new TypeormFilter());
   // 使用 class-validator验证controller中接收的参数
