@@ -162,10 +162,11 @@ export class ArticleService {
     }
   }
 
-  async create(createArticleDto: CreateArticleDto) {
+  async create(user: User, createArticleDto: CreateArticleDto) {
     // todo categoryId和tagIds怎么处理
     const { categoryId, tagIds, ...rest } = createArticleDto;
     const article = await this.articleRepository.create(rest);
+    article.author = user;
     await this.addCategoryToArticle(article, categoryId);
     await this.addTagsToArticle(article, tagIds);
     return this.articleRepository.save(article);
@@ -185,15 +186,15 @@ export class ArticleService {
     if (startTime && endTime) {
       where.createTime = Between(new Date(startTime), new Date(endTime));
     }
-    const { categoryId, tagIds } = findArticleDto;
+    const { categoryId, tagId } = findArticleDto;
     if (categoryId) {
       where.category = {
         id: Equal(+categoryId),
       };
     }
-    if (tagIds) {
+    if (tagId) {
       where.tags = {
-        id: In(tagIds.split(',')),
+        id: In([tagId]),
       };
     }
 
@@ -320,8 +321,9 @@ export class ArticleService {
     return this.articleRecommendRepository.save(record);
   }
   async getRecommendArticles() {
-    return this.articleRecommendRepository.find({
+    const recommends = await this.articleRecommendRepository.find({
       relations: { article: true },
     });
+    return recommends.map((recommends) => recommends.article);
   }
 }

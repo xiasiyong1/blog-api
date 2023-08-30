@@ -13,6 +13,7 @@ import {
 import { ArticleCategory } from './article-category.entity';
 import { ArticleTag } from './article-tag.entity';
 import { ArticleComment } from './article-comment.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class Article {
@@ -63,6 +64,10 @@ export class Article {
     cascade: true,
   })
   comments: ArticleComment[];
+
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn()
+  author: User;
 
   @CreateDateColumn({
     type: 'timestamp',

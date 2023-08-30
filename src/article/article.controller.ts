@@ -134,8 +134,10 @@ export class ArticleController {
   }
 
   @Post()
-  create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articleService.create(createArticleDto);
+  @UseGuards(JwtGuard)
+  create(@Body() createArticleDto: CreateArticleDto, @Req() req: Request) {
+    const user: User = req['user'];
+    return this.articleService.create(user, createArticleDto);
   }
 
   @Get()

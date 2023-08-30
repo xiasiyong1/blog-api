@@ -6,7 +6,7 @@ export class FindArticleDto {
   @IsOptional()
   categoryId: string;
   @IsOptional()
-  tagIds: string;
+  tagId: string;
   @IsOptional()
   startTime: string;
   @IsOptional()
