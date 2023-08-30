@@ -8,6 +8,7 @@ import { ArticleCategory } from './entities/article-category.entity';
 import { ArticleComment } from './entities/article-comment.entity';
 import { ArticleCommentMessage } from './entities/article-comment-message.entity';
 import { UserModule } from 'src/user/user.module';
+import { ArticleRecommend } from './entities/article-recommend.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserModule } from 'src/user/user.module';
       ArticleCategory,
       ArticleComment,
       ArticleCommentMessage,
+      ArticleRecommend,
     ]),
     UserModule,
   ],

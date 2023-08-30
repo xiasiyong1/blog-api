@@ -50,6 +50,15 @@ export class ArticleController {
     return this.articleService.getComments(+articleId);
   }
 
+  @Post('/recommend/:articleId')
+  recommendArticle(@Param('articleId') articleId: string) {
+    return this.articleService.recommendArticle(+articleId);
+  }
+  @Get('/recommend')
+  getRecommendArticles(n) {
+    return this.articleService.getRecommendArticles();
+  }
+
   @Post('/comment/message/:commentId')
   @UseGuards(JwtGuard)
   createCommentMessage(
@@ -74,6 +83,11 @@ export class ArticleController {
   @Get('/category')
   findAllCategory(@Query() findCategoryDto: FindCategoryDto) {
     return this.articleService.findAllCategory(findCategoryDto);
+  }
+
+  @Get('/category/:categoryId/tags')
+  findTagsByCategory(@Param('categoryId') categoryId: string) {
+    return this.articleService.findTagsByCategory(+categoryId);
   }
 
   @Get('/category/:id')

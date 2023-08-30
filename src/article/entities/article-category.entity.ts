@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Article } from './article.entity';
+import { ArticleTag } from './article-tag.entity';
 
 @Entity()
 export class ArticleCategory {
@@ -23,6 +24,9 @@ export class ArticleCategory {
 
   @UpdateDateColumn()
   updateTime: Date;
+
+  @OneToMany(() => ArticleTag, (articleTag) => articleTag.category)
+  tags: ArticleTag[];
 
   @OneToMany(() => Article, (article) => article.category)
   articles: Article[];

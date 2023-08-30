@@ -27,6 +27,7 @@ import { ArticleComment } from './entities/article-comment.entity';
 import { User } from 'src/user/entities/user.entity';
 import { ArticleCommentMessageDto } from './dto/article-comment-message.dto';
 import { ArticleCommentMessage } from './entities/article-comment-message.entity';
+import { ArticleRecommend } from './entities/article-recommend.entity';
 
 @Injectable()
 export class ArticleService {
@@ -41,6 +42,8 @@ export class ArticleService {
     private readonly articleCommentRepository: Repository<ArticleComment>,
     @InjectRepository(ArticleCommentMessage)
     private readonly articleCommentMessageRepository: Repository<ArticleCommentMessage>,
+    @InjectRepository(ArticleRecommend)
+    private readonly articleRecommendRepository: Repository<ArticleRecommend>,
   ) {}
 
   createCategory(articleCategoryDto: ArticleCategoryDto) {
@@ -49,21 +52,11 @@ export class ArticleService {
   }
 
   async findAllCategory(findCategoryDto: FindCategoryDto) {
-    const take = +findCategoryDto.pageSize || 10;
-    const currentPage = +findCategoryDto.currentPage || 1;
     const name = findCategoryDto.name || undefined;
-    const skip = (currentPage - 1) * take;
     const where = name ? { name: Like(`%${name}%`) } : {};
-    const [categoryList, count] =
-      await this.articleCategoryRepository.findAndCount({
-        where,
-        skip,
-        take,
-      });
-    return {
-      categoryList,
-      count,
-    };
+    return await this.articleCategoryRepository.find({
+      where,
+    });
   }
 
   findCategory(id: number) {
@@ -87,8 +80,13 @@ export class ArticleService {
     return this.articleCategoryRepository.remove(category);
   }
 
-  createTag(articleTagDto: ArticleTagDto) {
-    const tag = this.articleTagRepository.create(articleTagDto);
+  async createTag(articleTagDto: ArticleTagDto) {
+    const { name, categoryId } = articleTagDto;
+    const articleCategory = await this.articleCategoryRepository.findOne({
+      where: { id: categoryId },
+    });
+    const tag = this.articleTagRepository.create({ name });
+    tag.category = articleCategory;
     return this.articleTagRepository.save(tag);
   }
 
@@ -100,6 +98,7 @@ export class ArticleService {
     const where = name ? { name: Like(`%${name}%`) } : {};
     const [tags, count] = await this.articleTagRepository.findAndCount({
       where,
+      relations: { category: true },
       take,
       skip,
     });
@@ -109,13 +108,28 @@ export class ArticleService {
     };
   }
 
+  async findTagsByCategory(categoryId: number) {
+    const where: FindOptionsWhere<ArticleTag> = {
+      category: { id: categoryId },
+    };
+
+    return this.articleTagRepository.find({
+      where,
+    });
+  }
+
   findTag(id: number) {
     return this.articleTagRepository.findOne({ where: { id } });
   }
 
   async updateTag(id: number, articleTagDto: ArticleTagDto) {
-    let tag = await this.articleTagRepository.findOne({ where: { id } });
-    tag = this.articleTagRepository.merge(tag, articleTagDto);
+    const tag = await this.articleTagRepository.findOne({ where: { id } });
+    const { categoryId, name } = articleTagDto;
+    const category = await this.articleCategoryRepository.findOne({
+      where: { id: categoryId },
+    });
+    tag.category = category;
+    tag.name = name;
     return this.articleTagRepository.save(tag);
   }
 
@@ -292,5 +306,22 @@ export class ArticleService {
       message,
     );
     return this.articleCommentMessageRepository.save(commentMessage);
+  }
+  async recommendArticle(articleId: number) {
+    const article = await this.articleRepository.findOne({
+      where: { id: articleId },
+    });
+    if (!article) {
+      throw new NotFoundException('文章不存在');
+    }
+    const record = this.articleRecommendRepository.create({
+      article,
+    });
+    return this.articleRecommendRepository.save(record);
+  }
+  async getRecommendArticles() {
+    return this.articleRecommendRepository.find({
+      relations: { article: true },
+    });
   }
 }
