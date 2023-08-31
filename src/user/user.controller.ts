@@ -50,6 +50,11 @@ export class UserController {
   findAll(@Query() findUserDto: FindUserDto) {
     return this.userService.findAll(findUserDto);
   }
+  @Get('info')
+  getUserInfo(@Req() req: Request) {
+    const user: User = req['user'];
+    return user;
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

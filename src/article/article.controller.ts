@@ -25,11 +25,16 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Request } from 'express';
 import { User } from 'src/user/entities/user.entity';
 import { ArticleCommentMessageDto } from './dto/article-comment-message.dto';
+import { RedisService } from 'src/redis/redis.service';
+import { getRedisArticleViewedCacheKey } from './helper';
 
 @Controller('article')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly articleService: ArticleService,
+    private readonly redisService: RedisService,
+  ) {}
 
   @Post('/comment/:articleId')
   @UseGuards(JwtGuard)
@@ -147,7 +152,9 @@ export class ArticleController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.articleService.findOne(+id);
+    const redisArticleViewedCacheKey = getRedisArticleViewedCacheKey(+id);
+    this.redisService.incr(redisArticleViewedCacheKey);
+    return this.articleService.getArticleDetail(+id);
   }
 
   @Patch(':id')

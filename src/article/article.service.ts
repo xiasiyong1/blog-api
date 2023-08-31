@@ -28,6 +28,8 @@ import { User } from 'src/user/entities/user.entity';
 import { ArticleCommentMessageDto } from './dto/article-comment-message.dto';
 import { ArticleCommentMessage } from './entities/article-comment-message.entity';
 import { ArticleRecommend } from './entities/article-recommend.entity';
+import { RedisService } from 'src/redis/redis.service';
+import { getRedisArticleViewedCacheKey } from './helper';
 
 @Injectable()
 export class ArticleService {
@@ -44,6 +46,7 @@ export class ArticleService {
     private readonly articleCommentMessageRepository: Repository<ArticleCommentMessage>,
     @InjectRepository(ArticleRecommend)
     private readonly articleRecommendRepository: Repository<ArticleRecommend>,
+    private readonly redisService: RedisService,
   ) {}
 
   createCategory(articleCategoryDto: ArticleCategoryDto) {
@@ -220,15 +223,20 @@ export class ArticleService {
     };
   }
 
-  async findOne(id: number) {
+  async getArticleDetail(id: number) {
     const article = await this.articleRepository.findOne({
       where: { id },
-      relations: { tags: true, category: true },
+      relations: { tags: true, category: true, author: true },
     });
     if (!article) {
       throw new NotFoundException('文章不存在');
     }
-    return article;
+    const redisArticleViewedCacheKey = getRedisArticleViewedCacheKey(id);
+    const viewed = await this.redisService.get(redisArticleViewedCacheKey);
+    return {
+      ...article,
+      viewed: +viewed,
+    };
   }
 
   async update(id: number, updateArticleDto: UpdateArticleDto) {
@@ -261,7 +269,7 @@ export class ArticleService {
     const articleComment = await this.articleCommentRepository.create(
       articleCommentDto,
     );
-    articleComment.article = await this.findOne(articleId);
+    articleComment.article = await this.getArticleDetail(articleId);
     articleComment.user = user;
     return this.articleCommentRepository.save(articleComment);
   }

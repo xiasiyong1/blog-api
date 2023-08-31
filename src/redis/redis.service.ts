@@ -16,6 +16,10 @@ export class RedisService {
     return await this.redisClient.get(key);
   }
 
+  async incr(key: string) {
+    return await this.redisClient.incr(key);
+  }
+
   async set(key: string, value: string | number, ttl?: number) {
     await this.redisClient.set(key, value);
 

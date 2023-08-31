@@ -62,6 +62,7 @@ export class AuthService {
       refresh_token: await this.jwtService.signAsync(payload, {
         expiresIn: this.configService.get(ConfigEnum.JWT_REFRESH_TOKEN_EXPIRE),
       }),
+      user,
     };
   }
 
