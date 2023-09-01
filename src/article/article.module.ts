@@ -9,6 +9,7 @@ import { ArticleComment } from './entities/article-comment.entity';
 import { ArticleCommentMessage } from './entities/article-comment-message.entity';
 import { UserModule } from 'src/user/user.module';
 import { ArticleRecommend } from './entities/article-recommend.entity';
+import { ArticleLike } from 'src/article-like/entities/article-like.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ArticleRecommend } from './entities/article-recommend.entity';
       ArticleComment,
       ArticleCommentMessage,
       ArticleRecommend,
+      ArticleLike,
     ]),
     UserModule,
   ],

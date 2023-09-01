@@ -13,6 +13,7 @@ import { ArticleModule } from './article/article.module';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
 import { UploadModule } from './upload/upload.module';
+import { ArticleLikeModule } from './article-like/article-like.module';
 
 const envFilePath = ['.env', `.env.${process.env}`];
 
@@ -45,6 +46,7 @@ const envFilePath = ['.env', `.env.${process.env}`];
     RedisModule,
     EmailModule,
     UploadModule,
+    ArticleLikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

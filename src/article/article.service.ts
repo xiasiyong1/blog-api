@@ -30,6 +30,7 @@ import { ArticleCommentMessage } from './entities/article-comment-message.entity
 import { ArticleRecommend } from './entities/article-recommend.entity';
 import { RedisService } from 'src/redis/redis.service';
 import { getRedisArticleViewedCacheKey } from './helper';
+import { ArticleLike } from 'src/article-like/entities/article-like.entity';
 
 @Injectable()
 export class ArticleService {
@@ -46,6 +47,10 @@ export class ArticleService {
     private readonly articleCommentMessageRepository: Repository<ArticleCommentMessage>,
     @InjectRepository(ArticleRecommend)
     private readonly articleRecommendRepository: Repository<ArticleRecommend>,
+
+    @InjectRepository(ArticleLike)
+    private readonly articleLikeRepository: Repository<ArticleLike>,
+
     private readonly redisService: RedisService,
   ) {}
 
@@ -236,6 +241,17 @@ export class ArticleService {
     return {
       ...article,
       viewed: +viewed,
+    };
+  }
+  async getArticleStatus(articleId: number, userId: string) {
+    const articleLike = await this.articleLikeRepository.findOne({
+      where: {
+        articleId: Equal(articleId),
+        userId: Equal(userId),
+      },
+    });
+    return {
+      like: !!articleLike,
     };
   }
 

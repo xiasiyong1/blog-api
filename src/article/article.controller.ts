@@ -149,6 +149,12 @@ export class ArticleController {
   findAll(@Query() findArticleDto: FindArticleDto) {
     return this.articleService.findAll(findArticleDto);
   }
+  @Get('/status/:articleId')
+  @UseGuards(JwtGuard)
+  getArticleStatus(@Param('articleId') articleId: string, @Req() req: Request) {
+    const user: User = req['user'];
+    return this.articleService.getArticleStatus(+articleId, user.id);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
