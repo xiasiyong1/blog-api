@@ -4,13 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Article } from './article.entity';
 import { User } from 'src/user/entities/user.entity';
-import { ArticleCommentMessage } from './article-comment-message.entity';
 
 @Entity()
 export class ArticleComment {
