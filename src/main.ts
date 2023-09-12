@@ -20,6 +20,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/static',
   });
-  await app.listen(3000);
+  const port = process.env.APP_PORT || 3000;
+  await app.listen(port);
 }
 bootstrap();

@@ -15,7 +15,7 @@ import { EmailModule } from './email/email.module';
 import { UploadModule } from './upload/upload.module';
 import { ArticleLikeModule } from './article-like/article-like.module';
 
-const envFilePath = ['.env', `.env.${process.env}`];
+const envFilePath = [`.env.${process.env.NODE_ENV}`, '.env'];
 
 @Module({
   imports: [
