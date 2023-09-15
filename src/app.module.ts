@@ -14,6 +14,10 @@ import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
 import { UploadModule } from './upload/upload.module';
 import { ArticleLikeModule } from './article-like/article-like.module';
+import { ArticleCategoryModule } from './article-category/article-category.module';
+import { ArticleTagModule } from './article-tag/article-tag.module';
+import { ArticleCommentModule } from './article-comment/article-comment.module';
+import { ArticleRecommendModule } from './article-recommend/article-recommend.module';
 
 const envFilePath = [`.env.${process.env.NODE_ENV}`, '.env'];
 
@@ -47,6 +51,10 @@ const envFilePath = [`.env.${process.env.NODE_ENV}`, '.env'];
     EmailModule,
     UploadModule,
     ArticleLikeModule,
+    ArticleCategoryModule,
+    ArticleTagModule,
+    ArticleCommentModule,
+    ArticleRecommendModule,
   ],
   controllers: [AppController],
   providers: [AppService],

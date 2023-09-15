@@ -1,3 +1,4 @@
+import { ArticleTag } from 'src/article-tag/entities/article-tag.entity';
 import {
   Column,
   CreateDateColumn,
@@ -6,8 +7,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Article } from './article.entity';
-import { ArticleTag } from './article-tag.entity';
 
 @Entity()
 export class ArticleCategory {
@@ -16,18 +15,18 @@ export class ArticleCategory {
 
   @Column({
     comment: '分类名称',
+    type: 'varchar',
+    length: 20,
   })
   name: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    comment: '创建时间',
+  })
   createTime: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    comment: '更新时间',
+  })
   updateTime: Date;
-
-  @OneToMany(() => ArticleTag, (articleTag) => articleTag.category)
-  tags: ArticleTag[];
-
-  @OneToMany(() => Article, (article) => article.category)
-  articles: Article[];
 }

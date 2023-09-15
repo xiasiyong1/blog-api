@@ -11,7 +11,7 @@ export class FindUserDto {
   @IsOptional()
   gender: GenderEnum;
   @IsOptional()
-  roles: number[];
+  roleIds: number[];
   @IsOptional()
   email: string;
 }

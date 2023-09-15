@@ -4,6 +4,7 @@ import { TypeormFilter } from './filters/typeorm.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { FormatResponseInterceptor } from './interceptors/format-response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -11,6 +12,7 @@ async function bootstrap() {
   });
   app.setGlobalPrefix('/api/v1');
   app.useGlobalFilters(new TypeormFilter());
+  app.useGlobalInterceptors(new FormatResponseInterceptor());
   // 使用 class-validator验证controller中接收的参数
   app.useGlobalPipes(
     new ValidationPipe({

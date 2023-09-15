@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Article } from './article.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Article } from 'src/article/entities/article.entity';
 
 @Entity()
 export class ArticleComment {
@@ -16,27 +16,35 @@ export class ArticleComment {
   id: number;
 
   @Column({
+    type: 'varchar',
+    length: 300,
     comment: '评论内容',
   })
   content: string;
 
   @Column({
+    type: 'varchar',
+    length: 500,
     comment: '评论图片',
     nullable: true,
   })
   images: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    comment: '创建时间',
+  })
   createTime: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    comment: '更新时间',
+  })
   updateTime: Date;
 
   @ManyToOne(() => Article, (article) => article.id, { nullable: false })
   @JoinColumn({})
-  article: Article;
+  articleId: number;
 
   @ManyToOne(() => User, (user) => user.id, { nullable: false })
   @JoinColumn()
-  user: User;
+  userId: string;
 }

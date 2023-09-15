@@ -1,36 +1,35 @@
-import { User } from 'src/user/entities/user.entity';
+import { Article } from 'src/article/entities/article.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class Role {
+export class ArticleRecommend {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @OneToOne(() => Article, (article) => article.id)
+  @JoinColumn()
+  articleId: number;
+
   @Column({
-    unique: true,
-    type: 'varchar',
-    length: 20,
-    comment: '角色名称',
+    type: 'int',
+    default: 0,
   })
-  name: string;
+  sort: number;
 
   @CreateDateColumn({
     comment: '创建时间',
   })
   createTime: Date;
 
-  @UpdateDateColumn({
+  @CreateDateColumn({
     comment: '更新时间',
   })
   updateTime: Date;
-
-  @ManyToMany(() => User, (user) => user.roles)
-  users: User[];
 }

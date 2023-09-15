@@ -4,13 +4,12 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Profile } from './profile.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { Exclude } from 'class-transformer';
+import { GenderEnum } from 'src/enum/gender.enum';
 
 @Entity()
 export class User {
@@ -32,24 +31,48 @@ export class User {
   phone: string;
 
   @Column({
+    type: 'varchar',
+    length: 100,
     comment: '密码',
   })
   @Exclude()
   password: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    comment: '创建时间',
+  })
   createTime: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    comment: '更新时间',
+  })
   updateTime: Date;
 
-  @OneToOne(() => Profile, (profile) => profile.user)
-  profile: Profile;
-
-  @ManyToMany(() => Role, (role) => role.users, {
-    onUpdate: 'CASCADE',
-    cascade: true,
+  @Column({
+    type: 'varchar',
+    length: 20,
+    comment: '用户名称',
+    nullable: true,
   })
-  @JoinTable()
+  username: string;
+
+  @Column({
+    type: 'enum',
+    enum: GenderEnum,
+    comment: '女：1， 男：2，未知：3',
+    default: GenderEnum.UN_KNOWN,
+  })
+  gender: GenderEnum;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    comment: '头像',
+    nullable: true,
+  })
+  avatar: string;
+
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable({ name: 'user_roles' })
   roles: Role[];
 }

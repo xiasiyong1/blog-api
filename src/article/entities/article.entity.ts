@@ -1,3 +1,6 @@
+import { ArticleCategory } from 'src/article-category/entities/article-category.entity';
+import { ArticleTag } from 'src/article-tag/entities/article-tag.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,10 +13,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ArticleCategory } from './article-category.entity';
-import { ArticleTag } from './article-tag.entity';
-import { ArticleComment } from './article-comment.entity';
-import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class Article {
@@ -22,23 +21,25 @@ export class Article {
 
   @Column({
     type: 'varchar',
-    length: 100,
+    length: 50,
     comment: '标题',
   })
   title: string;
 
   @Column({
-    comment: '封面',
+    type: 'varchar',
+    length: 100,
+    comment: '文章描述',
+  })
+  summary: string;
+
+  @Column({
+    comment: '文章封面图',
+    type: 'varchar',
+    length: 100,
     nullable: true,
   })
   cover: string;
-
-  @Column({
-    type: 'varchar',
-    length: 120,
-    comment: '简介',
-  })
-  summary: string;
 
   @Column({
     type: 'longtext',
@@ -46,28 +47,24 @@ export class Article {
   })
   content: string;
 
-  @ManyToOne(
-    () => ArticleCategory,
-    (articleCategory) => articleCategory.articles,
-    { onDelete: 'CASCADE', onUpdate: 'CASCADE' },
-  )
-  @JoinColumn({ name: 'categoryId' })
-  category: ArticleCategory;
+  @ManyToOne(() => ArticleCategory, (articleCategory) => articleCategory.id)
+  @JoinColumn()
+  categoryId: number;
 
-  @ManyToMany(() => ArticleTag, (articleTag) => articleTag.article, {
+  @ManyToMany(() => ArticleTag, (articleTag) => articleTag.id, {
     cascade: true,
   })
-  @JoinTable()
-  tags: ArticleTag[];
+  @JoinTable({ name: 'article_tags' })
+  tagIds: number[];
 
-  @OneToMany(() => ArticleComment, (articleComment) => articleComment.article, {
-    cascade: true,
-  })
-  comments: ArticleComment[];
+  // @OneToMany(() => ArticleComment, (articleComment) => articleComment.article, {
+  //   cascade: true,
+  // })
+  // comments: ArticleComment[];
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn()
-  author: User;
+  userId: string;
 
   @CreateDateColumn({
     type: 'timestamp',

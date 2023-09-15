@@ -3,25 +3,13 @@ import { ArticleService } from './article.service';
 import { ArticleController } from './article.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
-import { ArticleTag } from './entities/article-tag.entity';
-import { ArticleCategory } from './entities/article-category.entity';
-import { ArticleComment } from './entities/article-comment.entity';
-import { ArticleCommentMessage } from './entities/article-comment-message.entity';
+import { ArticleTag } from '../article-tag/entities/article-tag.entity';
 import { UserModule } from 'src/user/user.module';
-import { ArticleRecommend } from './entities/article-recommend.entity';
 import { ArticleLike } from 'src/article-like/entities/article-like.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Article,
-      ArticleTag,
-      ArticleCategory,
-      ArticleComment,
-      ArticleCommentMessage,
-      ArticleRecommend,
-      ArticleLike,
-    ]),
+    TypeOrmModule.forFeature([Article, ArticleTag, ArticleLike]),
     UserModule,
   ],
   controllers: [ArticleController],

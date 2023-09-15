@@ -1,22 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { FindOptionsWhere, In, Like, Repository } from 'typeorm';
-import { UpdateProfileDto } from './dto/update-profile.dto';
-import { Profile } from './entities/profile.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from 'src/role/entities/role.entity';
 import { FindUserDto } from './dto/find-user-dto';
-import { GenderEnum } from 'src/enum/gender.enum';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
-    @InjectRepository(Profile)
-    private readonly profileRepository: Repository<Profile>,
   ) {}
   async create() {
     const user = this.userRepository.create({
@@ -34,28 +29,24 @@ export class UserService {
     const email = findUserDto.email;
     const skip = (currentPage - 1) * take;
 
-    const where: FindOptionsWhere<User> = {
-      profile: {
-        gender: findUserDto.gender || GenderEnum.UN_KNOWN,
-      },
-    };
+    const where: FindOptionsWhere<User> = {};
 
     if (username) {
-      where.profile['username'] = Like(`%${username}%`);
+      where.username = Like(`%${username}%`);
     }
 
     if (email) {
       where.email = Like(`%${email}%`);
     }
 
-    if (findUserDto.roles) {
+    if (findUserDto.roleIds) {
       where.roles = {
-        id: In(findUserDto.roles),
+        id: In(findUserDto.roleIds),
       };
     }
 
     const [userList, count] = await this.userRepository.findAndCount({
-      relations: { roles: true, profile: true },
+      relations: { roles: true },
       take,
       skip,
       where,
@@ -69,16 +60,12 @@ export class UserService {
   async findById(id: string) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: { profile: true, roles: true },
+      relations: { roles: true },
     });
     if (!user) {
       throw new NotFoundException('用户不存在');
     }
     return user;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
   }
 
   remove(id: number) {
@@ -89,13 +76,6 @@ export class UserService {
       where: { email },
       relations: { roles: true },
     });
-  }
-  async updateProfile(id: string, updateProfileDto: UpdateProfileDto) {
-    let profile = await this.profileRepository.findOne({
-      where: { user: { id } },
-    });
-    profile = this.profileRepository.merge(profile, updateProfileDto);
-    return this.profileRepository.save(profile);
   }
   async updateRole(id: string, updateRoleDto: UpdateRoleDto) {
     const { roleIds } = updateRoleDto;
@@ -111,6 +91,11 @@ export class UserService {
       },
     });
     user.roles = roles;
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+  }
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    let user = await this.findById(id);
+    user = this.userRepository.merge(user, updateUserDto);
+    await this.userRepository.save(user);
   }
 }
