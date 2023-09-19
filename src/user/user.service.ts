@@ -6,6 +6,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from 'src/role/entities/role.entity';
 import { FindUserDto } from './dto/find-user-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SuperAdminUpdateUserDto } from './dto/super-admin-update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -93,9 +94,17 @@ export class UserService {
     user.roles = roles;
     await this.userRepository.save(user);
   }
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto, roleIds?: number[]) {
     let user = await this.findById(id);
-    user = this.userRepository.merge(user, updateUserDto);
+    const { ...rest } = updateUserDto;
+    if (roleIds) {
+      user.roles = await this.roleRepository.find({
+        where: {
+          id: In(roleIds),
+        },
+      });
+    }
+    user = this.userRepository.merge(user, rest);
     await this.userRepository.save(user);
   }
 }
