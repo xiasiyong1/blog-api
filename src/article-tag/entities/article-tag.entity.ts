@@ -1,3 +1,4 @@
+import { ArticleCategory } from 'src/article-category/entities/article-category.entity';
 import {
   Column,
   CreateDateColumn,
@@ -18,11 +19,13 @@ export class ArticleTag {
     comment: '标签名称',
     type: 'varchar',
     length: 20,
+    unique: true,
   })
   name: string;
 
-  @Column({
-    comment: '分类id',
+  @ManyToOne(() => ArticleCategory, (articleCategory) => articleCategory.id)
+  @JoinColumn({
+    name: 'categoryId',
   })
   categoryId: number;
 

@@ -5,6 +5,7 @@ import { Like, Repository } from 'typeorm';
 import { ArticleTagDto } from './dto/article-tag.dto';
 import { FindTagDto } from './dto/find-tag.dto';
 import { ArticleCategory } from 'src/article-category/entities/article-category.entity';
+import { UpdateArticleTagDto } from './dto/update-article-tag.dto';
 
 @Injectable()
 export class ArticleTagService {
@@ -44,18 +45,22 @@ export class ArticleTagService {
   }
 
   findTag(id: number) {
-    return this.articleTagRepository.findOne({ where: { id } });
+    return this.articleTagRepository.findOne({
+      where: { id },
+      relations: ['categoryId'],
+    });
   }
 
-  async updateTag(id: number, articleTagDto: ArticleTagDto) {
-    const tag = await this.articleTagRepository.findOne({ where: { id } });
-    const { categoryId, name } = articleTagDto;
-    const category = await this.articleCategoryRepository.findOne({
-      where: { id: categoryId },
+  async updateTag(id: number, updateArticleTagDto: UpdateArticleTagDto) {
+    const tag = await this.articleTagRepository.findOne({
+      where: { id },
     });
-    tag.categoryId = category.id;
+    const { categoryId, name } = updateArticleTagDto;
+    if (categoryId) {
+      tag.categoryId = categoryId;
+    }
     tag.name = name;
-    return this.articleTagRepository.save(tag);
+    return await this.articleTagRepository.save(tag);
   }
 
   async removeTag(id: number) {
