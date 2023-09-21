@@ -21,6 +21,9 @@ import { Request } from 'express';
 import { User } from 'src/user/entities/user.entity';
 import { RedisService } from 'src/redis/redis.service';
 import { getRedisArticleViewedCacheKey } from './helper';
+import { RoleGuard } from 'src/auth/guards/role.guard';
+import { Roles } from 'src/decorators/role.decorators';
+import { RoleEnum } from 'src/enum/role.enum';
 
 @Controller('article')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -31,16 +34,18 @@ export class ArticleController {
   ) {}
 
   @Post()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN)
   create(@Body() createArticleDto: CreateArticleDto, @Req() req: Request) {
     const user: User = req['user'];
     return this.articleService.create(user, createArticleDto);
   }
 
-  @Get()
+  @Get('/list')
   findAll(@Query() findArticleDto: FindArticleDto) {
     return this.articleService.findAll(findArticleDto);
   }
+
   @Get('/status/:articleId')
   @UseGuards(JwtGuard)
   getArticleStatus(@Param('articleId') articleId: string, @Req() req: Request) {
@@ -55,11 +60,15 @@ export class ArticleController {
     return this.articleService.getArticleDetail(+id);
   }
 
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RoleEnum.ADMIN)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
     return this.articleService.update(+id, updateArticleDto);
   }
 
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RoleEnum.ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.articleService.remove(+id);

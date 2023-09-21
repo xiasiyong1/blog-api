@@ -28,7 +28,11 @@ export class RoleGuard implements CanActivate {
     if (roles.length === 0) {
       return true;
     }
-    const can = user.roles.some((role) => roles.includes(role.id));
+    const userRoleIds = user.roles.map((role) => role.id);
+    if (userRoleIds.includes(RoleEnum.SUPER_ADMIN)) {
+      return true;
+    }
+    const can = userRoleIds.some((id) => roles.includes(id));
     if (!can) {
       throw new ForbiddenException('你还不是admin成员');
     }

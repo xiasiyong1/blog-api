@@ -34,6 +34,9 @@ export class ArticleService {
     @InjectRepository(ArticleLike)
     private readonly articleLikeRepository: Repository<ArticleLike>,
 
+    @InjectRepository(ArticleTag)
+    private readonly articleTagRepository: Repository<ArticleTag>,
+
     private readonly redisService: RedisService,
   ) {}
 
@@ -43,7 +46,10 @@ export class ArticleService {
     const article = await this.articleRepository.create(rest);
     article.userId = user.id;
     article.categoryId = categoryId;
-    article.tagIds = tagIds;
+    const tags = await this.articleTagRepository.find({
+      where: { id: In(tagIds) },
+    });
+    article.tags = tags;
     return this.articleRepository.save(article);
   }
 
@@ -66,7 +72,7 @@ export class ArticleService {
       where.categoryId = Equal(+categoryId);
     }
     if (tagId) {
-      where.tagIds = In([tagId]);
+      where.tags = { id: In([tagId]) };
     }
 
     const [articleList, count] = await this.articleRepository.findAndCount({
@@ -80,7 +86,6 @@ export class ArticleService {
         'createTime',
         'cover',
         'title',
-        'tagIds',
         'summary',
       ],
     });
@@ -93,6 +98,7 @@ export class ArticleService {
   async getArticleDetail(id: number) {
     const article = await this.articleRepository.findOne({
       where: { id },
+      relations: ['categoryId', 'tags', 'userId'],
     });
     if (!article) {
       throw new NotFoundException('文章不存在');
@@ -120,8 +126,17 @@ export class ArticleService {
     let article = await this.articleRepository.findOne({
       where: { id },
     });
-
     article = this.articleRepository.merge(article, updateArticleDto);
+
+    if (updateArticleDto.tagIds) {
+      const tags = await this.articleTagRepository.find({
+        where: {
+          id: In(updateArticleDto.tagIds),
+        },
+      });
+      article.tags = tags;
+    }
+
     return this.articleRepository.save(article);
   }
 

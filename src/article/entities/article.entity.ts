@@ -55,7 +55,7 @@ export class Article {
     cascade: true,
   })
   @JoinTable({ name: 'article_tags' })
-  tagIds: number[];
+  tags: ArticleTag[];
 
   // @OneToMany(() => ArticleComment, (articleComment) => articleComment.article, {
   //   cascade: true,
