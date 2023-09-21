@@ -1,9 +1,11 @@
 import { Article } from 'src/article/entities/article.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -17,11 +19,9 @@ export class ArticleRecommend {
   @JoinColumn()
   articleId: number;
 
-  @Column({
-    type: 'int',
-    default: 0,
-  })
-  sort: number;
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'userId' })
+  userId: string;
 
   @CreateDateColumn({
     comment: '创建时间',
