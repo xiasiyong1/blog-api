@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleLike } from './entities/article-like.entity';
-import { Equal, In, Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Article } from 'src/article/entities/article.entity';
 
@@ -15,45 +15,56 @@ export class ArticleLikeService {
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
   ) {}
-  addArticleLike(articleId: number, userId: string) {
+  async addArticleLike(articleId: number, userId: string) {
+    const exist = await this.articleLikeRepository.exist({
+      where: {
+        articleId: Equal(articleId),
+        userId: Equal(userId),
+      },
+    });
+    if (exist) {
+      throw new BadRequestException('Record already exist');
+    }
     const record = this.articleLikeRepository.create({
       articleId,
       userId,
     });
-    return this.articleLikeRepository.save(record);
+    await this.articleLikeRepository.save(record);
   }
 
   async findUserLikeArticles(userId: string) {
-    const records = await this.articleLikeRepository.find({
+    const [records, count] = await this.articleLikeRepository.findAndCount({
       relations: ['articleId'],
       where: {
         userId: Equal(userId),
       },
-      // select: ['articleId'],
     });
-    return records.map((record) => {
-      return {
-        article: record.articleId,
-        id: record.id,
-        createdAt: record.createdAt,
-      };
-    });
+    return {
+      count,
+      articles: records.map((record) => record.articleId),
+    };
   }
 
   async findArticleLikeUsers(articleId: number) {
-    const userIds = await this.articleLikeRepository.find({
+    const [records, count] = await this.articleLikeRepository.findAndCount({
+      relations: ['userId'],
       where: {
         articleId,
       },
     });
-    return this.userRepository.find({
-      where: {
-        id: In(userIds),
-      },
-    });
+    return { count, users: records.map((record) => record.userId) };
   }
 
   async removeArticleLike(articleId: number, userId: string) {
+    const exist = await this.articleLikeRepository.exist({
+      where: {
+        articleId: Equal(articleId),
+        userId: Equal(userId),
+      },
+    });
+    if (!exist) {
+      throw new BadRequestException('Record not exist');
+    }
     const record = await this.articleLikeRepository.find({
       where: {
         articleId: Equal(articleId),
@@ -61,9 +72,9 @@ export class ArticleLikeService {
       },
     });
     if (record) {
-      return this.articleLikeRepository.remove(record);
+      await this.articleLikeRepository.remove(record);
     } else {
-      throw new NotFoundException('Record not found ');
+      throw new BadRequestException('Record not found ');
     }
   }
 }

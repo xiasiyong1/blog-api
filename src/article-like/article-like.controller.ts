@@ -18,33 +18,32 @@ import { User } from 'src/user/entities/user.entity';
 export class ArticleLikeController {
   constructor(private readonly articleLikeService: ArticleLikeService) {}
 
-  @Post()
+  @Post('/:articleId')
   @UseGuards(JwtGuard)
-  addArticleLike(
-    @Req() req: Request,
-    @Body() createArticleLikeDto: CreateArticleLikeDto,
-  ) {
+  addArticleLike(@Req() req: Request, @Param('articleId') articleId: string) {
     const user: User = req['user'];
-    const { articleId } = createArticleLikeDto;
-    return this.articleLikeService.addArticleLike(articleId, user.id);
+    return this.articleLikeService.addArticleLike(+articleId, user.id);
   }
 
-  @Get('/users')
+  @Get('/articles')
   @UseGuards(JwtGuard)
   findUserLikeArticles(@Req() req: Request) {
     const user: User = req['user'];
     return this.articleLikeService.findUserLikeArticles(user.id);
   }
 
-  @Get('/:articleId')
+  @Get('/:articleId/users')
   findArticleLikeUsers(@Param('articleId') articleId: string) {
     return this.articleLikeService.findArticleLikeUsers(+articleId);
   }
 
-  @Delete(':id')
+  @Delete('/:articleId')
   @UseGuards(JwtGuard)
-  removeArticleLike(@Req() req: Request, @Param('id') id: string) {
+  removeArticleLike(
+    @Req() req: Request,
+    @Param('articleId') articleId: string,
+  ) {
     const user: User = req['user'];
-    return this.articleLikeService.removeArticleLike(+id, user.id);
+    return this.articleLikeService.removeArticleLike(+articleId, user.id);
   }
 }
