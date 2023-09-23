@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -28,9 +29,9 @@ export class RoleController {
   }
 
   @Roles(RoleEnum.SUPER_ADMIN)
-  @Get()
-  findAll() {
-    return this.roleService.findAll();
+  @Get('/list')
+  findRoles(@Query('name') name: string) {
+    return this.roleService.findRoles(name);
   }
 
   @Roles(RoleEnum.SUPER_ADMIN)

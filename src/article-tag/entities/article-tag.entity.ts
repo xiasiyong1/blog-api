@@ -23,9 +23,8 @@ export class ArticleTag {
   })
   name: string;
 
-  @ManyToOne(() => ArticleCategory, (articleCategory) => articleCategory.id)
-  @JoinColumn({
-    name: 'categoryId',
+  @Column({
+    comment: '文章分类id',
   })
   categoryId: number;
 

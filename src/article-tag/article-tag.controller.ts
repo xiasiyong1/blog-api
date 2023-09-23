@@ -30,8 +30,8 @@ export class ArticleTagController {
   }
 
   @Get('/list')
-  findAllTag(@Query() findAllTag: FindTagDto) {
-    return this.articleTagService.findAllTag(findAllTag);
+  getArticleTagList(@Query() findAllTag: FindTagDto) {
+    return this.articleTagService.getArticleTagList(findAllTag);
   }
 
   @Get('/:id')

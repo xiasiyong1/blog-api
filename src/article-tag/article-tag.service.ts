@@ -26,22 +26,12 @@ export class ArticleTagService {
     return this.articleTagRepository.save(tag);
   }
 
-  async findAllTag(findTagDto: FindTagDto) {
-    const take = +findTagDto.pageSize || 10;
-    const currentPage = +findTagDto.currentPage || 1;
+  async getArticleTagList(findTagDto: FindTagDto) {
     const name = findTagDto.name || undefined;
-    const skip = (currentPage - 1) * take;
     const where = name ? { name: Like(`%${name}%`) } : {};
-    const [tags, count] = await this.articleTagRepository.findAndCount({
+    return this.articleTagRepository.find({
       where,
-      relations: ['categoryId'],
-      take,
-      skip,
     });
-    return {
-      tags,
-      count,
-    };
   }
 
   findTag(id: number) {
