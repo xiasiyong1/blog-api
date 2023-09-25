@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import {
@@ -77,6 +73,7 @@ export class ArticleService {
 
     const [articleList, count] = await this.articleRepository.findAndCount({
       where,
+      relations: ['tags'],
       skip,
       take,
       select: [
@@ -98,7 +95,7 @@ export class ArticleService {
   async getArticleDetail(id: number) {
     const article = await this.articleRepository.findOne({
       where: { id },
-      relations: ['categoryId', 'tags', 'userId'],
+      relations: ['tags', 'userId'],
     });
     if (!article) {
       throw new NotFoundException('文章不存在');
