@@ -48,9 +48,7 @@ export class ArticleRecommendService {
   }
 
   async getRecommendArticles() {
-    const recommends = await this.articleRecommendRepository.find({
-      relations: ['articleId'],
-    });
+    const recommends = await this.articleRecommendRepository.find({});
     return recommends;
   }
 }

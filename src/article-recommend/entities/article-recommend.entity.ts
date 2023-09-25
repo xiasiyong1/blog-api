@@ -15,8 +15,7 @@ export class ArticleRecommend {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Article, (article) => article.id)
-  @JoinColumn()
+  @Column({ comment: '文章id' })
   articleId: number;
 
   @ManyToOne(() => User, (user) => user.id)
