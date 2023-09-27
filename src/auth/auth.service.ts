@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,6 +18,7 @@ import { SignUpWithEmailVo } from './vo/sign-up-with-email.vo';
 import { SignInWithEmailVo } from './vo/sign-in-with-email.vo';
 import { RedisService } from 'src/redis/redis.service';
 import { Role } from 'src/role/entities/role.entity';
+import { InitUserDto } from './dto/init-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -69,5 +74,24 @@ export class AuthService {
       expiresIn: this.configService.get(ConfigEnum.JWT_REFRESH_TOKEN_EXPIRE),
     });
     return signInWithEmailVo;
+  }
+  async initUser(initUserDto: InitUserDto) {
+    const { email, password } = initUserDto;
+    console.log(email, password);
+    if (email === '514123901@qq.com') {
+      const safePassword = await argon2.hash(password);
+      const role = await this.roleRepository.findOne({
+        where: { id: RoleEnum.SUPER_ADMIN },
+      });
+      const user = await this.userRepository.create({
+        email,
+        password: safePassword,
+        roles: [role],
+      });
+
+      await this.userRepository.save(user);
+    } else {
+      throw new ForbiddenException('无权限');
+    }
   }
 }
