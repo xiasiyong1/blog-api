@@ -29,15 +29,23 @@ const envFilePath = [`.env.${process.env.NODE_ENV}`, '.env'];
     }),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
+        console.log(123123,configService.get(ConfigEnum.DB_TYPE))
         return {
-          type: configService.get(ConfigEnum.DB_TYPE),
-          host: configService.get(ConfigEnum.DB_HOST),
-          port: configService.get(ConfigEnum.DB_PORT),
-          username: configService.get(ConfigEnum.DB_USERNAME),
-          password: configService.get(ConfigEnum.DB_PASSWORD),
-          database: configService.get(ConfigEnum.DB_DATABASE),
+          type: 'mysql',
+          host: '127.0.0.1',
+          port: 12000,
+          username: 'root',
+          password:'test1',
+          database:'blog_project',
+          // type: configService.get(ConfigEnum.DB_TYPE),
+          // host: configService.get(ConfigEnum.DB_HOST),
+          // port: configService.get(ConfigEnum.DB_PORT),
+          // username: configService.get(ConfigEnum.DB_USERNAME),
+          // password: configService.get(ConfigEnum.DB_PASSWORD),
+          // database: configService.get(ConfigEnum.DB_DATABASE),
           entities: [join(__dirname, '**', '*.entity.{ts,js}')],
           synchronize: true,
+          logging: true,
         } as TypeOrmModuleOptions;
       },
       inject: [ConfigService],

@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - '8000:8000'
+    networks:
+     - demo-network
+  mysql:
+    image: mysql
+    ports:
+      - '12000:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: test1
+      MYSQL_DATABASE: blog_project
+
+    networks:
+     - demo-network
+
+    volumes:
+      - /Users/xiasiyong/mysql-data:/var/lib/mysql
+  redis:
+    image: redis
+    ports:
+      - '12001:6379'
+    volumes:
+      - /Users/xiasiyong/aaa:/data
+    networks:
+     - demo-network
+
+networks:
+  demo-network:
