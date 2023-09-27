@@ -8,7 +8,7 @@
 - [ ] 文章推荐
 - [ ] 标签和分类关联关系
 
-docker run --name mysql -p 12000:3306 -e MYSQL_DATABASE=blog_project -e MYSQL_ROOT_PASSWORD=test1 -d mysql
+docker run --name mysql -p 12000:3306 -e MYSQL_DATABASE=blog_project -e MYSQL_ROOT_PASSWORD=muSuT66G021oiWWZOqwHGEYnloiRUSOk -d mysql
 
 mysql -u root -P 12000 -p test1
 
