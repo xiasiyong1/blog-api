@@ -10,6 +10,8 @@
 
 docker run --name mysql -p 12000:3306 -e MYSQL_DATABASE=blog_project -e MYSQL_ROOT_PASSWORD=muSuT66G021oiWWZOqwHGEYnloiRUSOk -d mysql
 
-mysql -u root -P 12000 -p test1
+mysql -u root -P 12000 -p muSuT66G021oiWWZOqwHGEYnloiRUSOk
 
 redis-cli -p 12001
+
+mysql -uroot -pmuSuT66G021oiWWZOqwHGEYnloiRUSOk
