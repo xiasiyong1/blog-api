@@ -40,7 +40,7 @@ export class ArticleService {
     // todo categoryId和tagIds怎么处理
     const { categoryId, tagIds, ...rest } = createArticleDto;
     const article = await this.articleRepository.create(rest);
-    article.userId = user.id;
+    article.user = user;
     article.categoryId = categoryId;
     const tags = await this.articleTagRepository.find({
       where: { id: In(tagIds) },
@@ -95,7 +95,7 @@ export class ArticleService {
   async getArticleDetail(id: number) {
     const article = await this.articleRepository.findOne({
       where: { id },
-      relations: ['tags', 'userId'],
+      relations: ['tags', 'user'],
     });
     if (!article) {
       throw new NotFoundException('文章不存在');

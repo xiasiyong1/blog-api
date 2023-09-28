@@ -13,4 +13,5 @@ export enum ConfigEnum {
   EMAIL_HOST = 'EMAIL_HOST',
   EMAIL_PORT = 'EMAIL_PORT',
   REDIS_PORT = 'REDIS_PORT',
+  ADMIN_DOMAIN = 'ADMIN_DOMAIN',
 }

@@ -38,7 +38,7 @@ const envFilePath = [`.env.${process.env.NODE_ENV}`, '.env'];
           database: configService.get(ConfigEnum.DB_DATABASE),
           entities: [join(__dirname, '**', '*.entity.{ts,js}')],
           synchronize: true,
-          logging: true,
+          // logging: true,
         } as TypeOrmModuleOptions;
       },
       inject: [ConfigService],

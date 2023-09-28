@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -19,6 +20,9 @@ import { SignInWithEmailVo } from './vo/sign-in-with-email.vo';
 import { RedisService } from 'src/redis/redis.service';
 import { Role } from 'src/role/entities/role.entity';
 import { InitUserDto } from './dto/init-user.dto';
+import { getRandomString } from 'src/utils/crypto';
+import { CreateUserByCodeDto } from './dto/create-user-by-code.dto';
+import { GetInviteCodeDto } from './dto/get-invite-code.dto';
 
 @Injectable()
 export class AuthService {
@@ -77,7 +81,6 @@ export class AuthService {
   }
   async initUser(initUserDto: InitUserDto) {
     const { email, password } = initUserDto;
-    console.log(email, password);
     if (email === '514123901@qq.com') {
       const safePassword = await argon2.hash(password);
       const role = await this.roleRepository.findOne({
@@ -93,5 +96,60 @@ export class AuthService {
     } else {
       throw new ForbiddenException('无权限');
     }
+  }
+  async addUser(initUserDto: InitUserDto) {
+    const { email, password } = initUserDto;
+    const exist = await this.userRepository.exist({
+      where: { email },
+    });
+    if (exist) {
+      throw new ForbiddenException('该用户已存在');
+    }
+    const safePassword = await argon2.hash(password);
+    const role = await this.roleRepository.findOne({
+      where: { id: RoleEnum.VISITOR },
+    });
+    const user = await this.userRepository.create({
+      email,
+      password: safePassword,
+      roles: [role],
+    });
+
+    await this.userRepository.save(user);
+  }
+
+  getInviteInfo(code: string) {
+    return this.redisService.hashGet(code);
+  }
+  async createUserByCode(createUserByCodeDto: CreateUserByCodeDto) {
+    const { email, code, password } = createUserByCodeDto;
+    const redisInfo = await this.redisService.hashGet(code);
+    if (!redisInfo) {
+      throw new NotFoundException('邀请码不存在');
+    }
+    if (redisInfo.email !== email) {
+      throw new ForbiddenException('邀请码不匹配');
+    }
+    const exist = await this.userRepository.exist({
+      where: { email },
+    });
+    if (exist) {
+      throw new ForbiddenException('该用户已存在');
+    }
+    const roleId = +redisInfo.roleId;
+    const role = await this.roleRepository.findOne({
+      where: {
+        id: roleId,
+      },
+    });
+    if (!role) {
+      throw new ForbiddenException('角色不存在');
+    }
+    const user = await this.userRepository.create({
+      email,
+      roles: [role],
+      password: await argon2.hash(password),
+    });
+    await this.userRepository.save(user);
   }
 }

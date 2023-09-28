@@ -4,4 +4,5 @@ export enum RoleEnum {
   ADMIN = 3,
   ADMIN_ARTICLE = 4,
   ADMIN_BANNER = 5,
+  VISITOR = 6,
 }

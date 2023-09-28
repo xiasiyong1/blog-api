@@ -34,7 +34,7 @@ export class RoleGuard implements CanActivate {
     }
     const can = userRoleIds.some((id) => roles.includes(id));
     if (!can) {
-      throw new ForbiddenException('你还不是admin成员');
+      throw new ForbiddenException('权限不足');
     }
     return can;
   }

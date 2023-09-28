@@ -34,6 +34,7 @@ export class AdminGuard implements CanActivate {
     if (roles.length === 0) {
       return true;
     }
+    console.log(user.roles, roles);
     const can = user.roles.some((role) => roles.includes(role.id));
     if (!can) {
       throw new ForbiddenException('你还不是admin成员');

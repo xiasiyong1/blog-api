@@ -63,9 +63,9 @@ export class Article {
   // })
   // comments: ArticleComment[];
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User)
   @JoinColumn()
-  userId: string;
+  user: User;
 
   @CreateDateColumn({
     type: 'timestamp',
