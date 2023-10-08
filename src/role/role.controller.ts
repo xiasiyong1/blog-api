@@ -28,7 +28,6 @@ export class RoleController {
     return this.roleService.create(createRoleDto);
   }
 
-  @Roles(RoleEnum.SUPER_ADMIN)
   @Get('/list')
   findRoles(@Query('name') name: string) {
     return this.roleService.findRoles(name);

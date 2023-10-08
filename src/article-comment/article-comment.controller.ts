@@ -17,7 +17,7 @@ import { Request } from 'express';
 export class ArticleCommentController {
   constructor(private readonly articleCommentService: ArticleCommentService) {}
 
-  @Post('/comment/:articleId')
+  @Post('/:articleId')
   @UseGuards(JwtGuard)
   createComment(
     @Param('articleId') articleId: string,
@@ -31,7 +31,7 @@ export class ArticleCommentController {
       articleCommentDto,
     );
   }
-  @Get('/comment/:articleId')
+  @Get('/list/:articleId')
   getArticleComments(@Param('articleId') articleId: string) {
     return this.articleCommentService.getComments(+articleId);
   }

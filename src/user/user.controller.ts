@@ -72,6 +72,6 @@ export class UserController {
   @Roles(RoleEnum.SUPER_ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+    return this.userService.remove(id);
   }
 }

@@ -141,4 +141,16 @@ export class ArticleService {
     const article = await this.articleRepository.findOne({ where: { id } });
     return this.articleRepository.remove(article);
   }
+
+  async getArticleData(articleId: number, userId: string) {
+    const articleLike = await this.articleLikeRepository.findOne({
+      where: {
+        articleId: Equal(articleId),
+        userId: Equal(userId),
+      },
+    });
+    return {
+      isLike: !!articleLike,
+    };
+  }
 }

@@ -44,7 +44,7 @@ export class ArticleComment {
   @JoinColumn({})
   articleId: number;
 
-  @ManyToOne(() => User, (user) => user.id, { nullable: false })
+  @ManyToOne(() => User)
   @JoinColumn()
-  userId: string;
+  user: User;
 }

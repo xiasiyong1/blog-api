@@ -48,6 +48,7 @@ export class AuthService {
     });
     let user = await this.userRepository.create({
       email,
+      username: email,
       password: safePassword,
       roles: [role],
     });
@@ -88,6 +89,7 @@ export class AuthService {
       });
       const user = await this.userRepository.create({
         email,
+        username: email,
         password: safePassword,
         roles: [role],
       });

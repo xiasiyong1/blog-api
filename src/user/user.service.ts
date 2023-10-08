@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { FindOptionsWhere, In, Like, Repository } from 'typeorm';
@@ -7,6 +11,7 @@ import { Role } from 'src/role/entities/role.entity';
 import { FindUserDto } from './dto/find-user-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SuperAdminUpdateUserDto } from './dto/super-admin-update-user.dto';
+import { RoleEnum } from 'src/enum/role.enum';
 
 @Injectable()
 export class UserService {
@@ -69,8 +74,20 @@ export class UserService {
     return user;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    const user = await this.userRepository.findOne({
+      relations: { roles: true },
+      where: {
+        id,
+      },
+    });
+    if (
+      user.roles &&
+      user.roles.find((item) => item.id === RoleEnum.SUPER_ADMIN)
+    ) {
+      throw new BadRequestException('超级管理员不可删除');
+    }
+    return this.userRepository.remove(user);
   }
   findUserByEmail(email: string) {
     return this.userRepository.findOne({

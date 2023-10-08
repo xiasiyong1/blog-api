@@ -19,13 +19,13 @@ export class ArticleCommentService {
     const articleComment = await this.articleCommentRepository.create({
       ...articleCommentDto,
       articleId,
-      userId: user.id,
+      user,
     });
     return this.articleCommentRepository.save(articleComment);
   }
   async getComments(articleId: number) {
     const comments = await this.articleCommentRepository.find({
-      relations: ['userId'],
+      relations: ['user'],
       where: {
         articleId,
       },

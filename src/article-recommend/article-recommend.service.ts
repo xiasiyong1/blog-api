@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ArticleRecommend } from './entities/article-recommend.entity';
 import { Article } from 'src/article/entities/article.entity';
 
@@ -49,6 +49,13 @@ export class ArticleRecommendService {
 
   async getRecommendArticles() {
     const recommends = await this.articleRecommendRepository.find({});
-    return recommends;
+    const articleIds = recommends.map((recommend) => recommend.articleId);
+    const articles = await this.ArticleRepository.find({
+      where: {
+        id: In(articleIds),
+      },
+      relations: ['user'],
+    });
+    return articles;
   }
 }

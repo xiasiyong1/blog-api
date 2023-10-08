@@ -53,6 +53,13 @@ export class ArticleController {
     return this.articleService.getArticleStatus(+articleId, user.id);
   }
 
+  @Get('/data/:articleId')
+  @UseGuards(JwtGuard)
+  getArticleData(@Req() req: Request, @Param('articleId') articleId: string) {
+    const user: User = req['user'];
+    return this.articleService.getArticleData(+articleId, user.id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     const redisArticleViewedCacheKey = getRedisArticleViewedCacheKey(+id);
