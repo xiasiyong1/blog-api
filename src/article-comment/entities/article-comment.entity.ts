@@ -40,8 +40,7 @@ export class ArticleComment {
   })
   updateTime: Date;
 
-  @ManyToOne(() => Article, (article) => article.id, { nullable: false })
-  @JoinColumn({})
+  @Column({})
   articleId: number;
 
   @ManyToOne(() => User)

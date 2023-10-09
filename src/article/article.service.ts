@@ -33,6 +33,9 @@ export class ArticleService {
     @InjectRepository(ArticleTag)
     private readonly articleTagRepository: Repository<ArticleTag>,
 
+    @InjectRepository(ArticleComment)
+    private readonly ArticleCommentRepository: Repository<ArticleComment>,
+
     private readonly redisService: RedisService,
   ) {}
 
@@ -73,7 +76,7 @@ export class ArticleService {
 
     const [articleList, count] = await this.articleRepository.findAndCount({
       where,
-      relations: ['tags'],
+      relations: ['tags', 'user'],
       skip,
       take,
       select: [
@@ -100,12 +103,8 @@ export class ArticleService {
     if (!article) {
       throw new NotFoundException('文章不存在');
     }
-    const redisArticleViewedCacheKey = getRedisArticleViewedCacheKey(id);
-    const viewed = await this.redisService.get(redisArticleViewedCacheKey);
-    return {
-      ...article,
-      viewed: +viewed,
-    };
+
+    return article;
   }
   async getArticleStatus(articleId: number, userId: string) {
     const articleLike = await this.articleLikeRepository.findOne({
@@ -149,8 +148,20 @@ export class ArticleService {
         userId: Equal(userId),
       },
     });
+    const likeCount = await this.articleLikeRepository.count({
+      where: { articleId: Equal(articleId) },
+    });
+    const commentCount = await this.ArticleCommentRepository.count({
+      where: { articleId: Equal(articleId) },
+    });
+    const redisArticleViewedCacheKey = getRedisArticleViewedCacheKey(articleId);
+    const viewCount = await this.redisService.get(redisArticleViewedCacheKey);
+
     return {
       isLike: !!articleLike,
+      likeCount,
+      commentCount,
+      viewCount,
     };
   }
 }
